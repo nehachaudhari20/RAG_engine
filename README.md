@@ -6,10 +6,6 @@ designed for **evidence retrieval**, not answer generation.
 This repository implements the **retrieval and memory substrate** for agentic
 systems, reliability pipelines, and knowledge-grounded applications.
 
-> This is **not** a chatbot and **not** an agent framework.
-> It is a reusable retrieval engine intended to be consumed by higher-level
-agent runtimes.
-
 ---
 
 ## ✨ Key Features
@@ -21,7 +17,6 @@ agent runtimes.
 - 📦 Clean, structured retrieval outputs
 - 🔌 Engine-grade API (`add_documents`, `query`)
 - 🧱 No LLM dependency
-- 🧠 No agent or orchestration logic
 
 ---
 
@@ -32,12 +27,6 @@ agent runtimes.
 - A **memory layer** for agentic systems
 - A reusable infra component
 - Deterministic and testable
-
-### ❌ This repo is **NOT**
-- An agent
-- A chatbot
-- An LLM wrapper
-- An evaluation framework (RAGAS lives elsewhere)
 
 ---
 
