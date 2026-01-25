@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: rag-engine
+Version: 0.1.0
+Summary: Structure-aware RAG engine for research papers
+Requires-Python: >=3.9

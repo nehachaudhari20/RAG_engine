@@ -5,11 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rag-engine"
 version = "0.1.0"
-description = "Passive retrieval and memory engine for agentic systems"
+description = "Structure-aware RAG engine for research papers"
 requires-python = ">=3.9"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["rag_engine*"]
