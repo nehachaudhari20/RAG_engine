@@ -1,11 +1,14 @@
-# src/rag_engine/chunking/base.py
-
+# rag_engine/chunking/base_chunker.py
 from abc import ABC, abstractmethod
 from typing import List
-from rag_engine.schema.document import Document, Chunk
+from rag_engine.schema.block import Block
 
 
 class BaseChunker(ABC):
+
     @abstractmethod
-    def chunk(self, document: Document) -> List[Chunk]:
+    def chunk(self, blocks: List[Block]) -> List[Block]:
+        """
+        Takes paragraph-level blocks and returns chunk-level blocks.
+        """
         pass

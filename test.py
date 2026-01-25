@@ -1,30 +1,21 @@
-# test.py
-import os
-
+# test_chunking.py
 from rag_engine.ingestion.paper_parser import parse_paper
+from rag_engine.chunking.semantic_chunker import SemanticChunker
+from rag_engine.embeddings.embedder import Embedder
 
-def main():
-    # Path to sample PDF
-    pdf_path = os.path.join("data", "sample_paper.pdf")
-    if not os.path.exists(pdf_path):
-        print(f"[ERROR] PDF not found at {pdf_path}")
-        return
+doc = parse_paper("data/sample_paper.pdf")
 
-    # Parse the paper
-    doc = parse_paper(pdf_path, doc_id="test_doc")
+embedder = Embedder()
+chunker = SemanticChunker(embedder)
 
-    # Display summary
-    print("=" * 80)
-    print(f"Parsed Document ID: {doc.doc_id}")
-    print(f"Total blocks: {len(doc.blocks)}")
-    print("=" * 80)
+chunks = chunker.chunk(doc.blocks)
 
-    # Show first few blocks
-    for i, block in enumerate(doc.blocks[:10]):
-        print(f"[{i:02d}] Section: {block.section_title}")
-        print(f"    Type: {block.block_type}")
-        print(f"    Preview: {block.preview(150)}")
-        print("-" * 80)
+print(f"Total semantic chunks: {len(chunks)}")
 
-if __name__ == "__main__":
-    main()
+for c in chunks[:5]:
+    print(
+        f"[Chunk] paragraphs={c.metadata['num_paragraphs']}, "
+        f"section={c.section_title}"
+    )
+    print(c.preview(200))
+    print("-" * 80)
