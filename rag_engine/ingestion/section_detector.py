@@ -2,23 +2,21 @@
 import re
 from typing import List, Tuple
 
-
 SECTION_REGEX = re.compile(
-    r"^(?:\d+(\.\d+)*\s+)?[A-Z][A-Za-z\s\-]{2,}$"
+    r"^(\d+(\.\d+)*)\s+[A-Z][A-Za-z0-9\s\-]{2,}$"
 )
 
 
 def detect_sections(text: str) -> List[Tuple[str, str]]:
-    """
-    Returns list of (section_title, section_text)
-    """
     lines = text.split("\n")
     sections = []
-    current_title = "Introduction"
+
+    current_title = "Abstract"
     current_lines = []
 
     for line in lines:
         line = line.strip()
+
         if SECTION_REGEX.match(line):
             if current_lines:
                 sections.append((current_title, "\n".join(current_lines)))
