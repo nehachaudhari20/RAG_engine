@@ -1,159 +1,146 @@
-# RAG Engine
+# Structure-Aware RAG Engine for Research Papers
 
-A **domain-agnostic, engine-level Retrieval-Augmented Generation (RAG) core**
-designed for **evidence retrieval**, not answer generation.
+This project implements a **research-grade Retrieval-Augmented Generation (RAG) engine**
+designed specifically for **research papers**.
 
-This repository implements the **retrieval and memory substrate** for agentic
-systems, reliability pipelines, and knowledge-grounded applications.
+Unlike standard RAG pipelines that rely on fixed-size or token-based chunking, this system
+**explicitly understands document structure and semantics** before retrieval.
 
----
-
-## ✨ Key Features
-
-- 📄 Multi-source ingestion (text, JSON, logs, PDFs)
-- ✂️ Pluggable chunking strategies (fixed, overlapping)
-- 🧠 Real semantic embeddings (Sentence Transformers)
-- 🔍 FAISS-based vector search (cosine similarity)
-- 📦 Clean, structured retrieval outputs
-- 🔌 Engine-grade API (`add_documents`, `query`)
-- 🧱 No LLM dependency
+The core focus is **high-quality chunking and retrieval**, not prompt engineering or UI tricks.
 
 ---
 
-## 🧠 What This Repo Is (and Is Not)
+## 🚀 Key Idea
 
-### ✅ This repo **IS**
-- A **retrieval engine**
-- A **memory layer** for agentic systems
-- A reusable infra component
-- Deterministic and testable
+> **Retrieval quality depends more on how documents are chunked than on how prompts are written.**
+
+Most RAG systems treat documents as flat text and split them arbitrarily.
+This project instead:
+- parses research papers into structured elements
+- groups paragraphs into **semantic chunks**
+- retrieves context based on **meaning and structure**, not token windows
 
 ---
 
-## 🏗 Architecture Overview
+## ✨ Features
+
+### 📘 Structure-Aware Ingestion
+- Parses research papers (PDFs) into:
+  - sections
+  - paragraphs
+- Preserves:
+  - section titles
+  - document order
+- Normalizes noisy PDF text for better embeddings
+
+### 🧩 Semantic Chunking (Core Contribution)
+- Chunks are **not token-based**
+- Adjacent paragraphs are grouped **only if they are semantically similar**
+- Topic shifts trigger new chunks
+- Designed to keep:
+  - explanations
+  - algorithms
+  - conceptual blocks intact
+
+### 🔍 Vector-Based Retrieval
+- Uses **Sentence-Transformers** for embeddings
+- Uses **FAISS** for vector indexing
+- Retrieves top-k **semantic chunks**, not raw paragraphs
+- Preserves document order for readable context
+
+### 🎨 Streamlit Visualization
+- Upload a research paper
+- Inspect:
+  - semantic chunks
+  - retrieved context
+- Acts as a **debugger for document intelligence**, not a chatbot
+
+---
+
+## 🏗️ Project Structure
 
 ```
 
-Documents (text / PDF / logs)
-↓
-Ingestion
-↓
-Chunking
-↓
-Embeddings
-↓
-FAISS Index
-↓
-Semantic Retrieval
-↓
-Structured Evidence Results
+rag_engine/
+│
+├── rag_engine/                # Core RAG engine (installable package)
+│   ├── ingestion/             # PDF parsing & section detection
+│   ├── schema/                # Block & document abstractions
+│   ├── chunking/              # Semantic + structure-aware chunking
+│   ├── embeddings/            # Embedding interface
+│   ├── index/                 # FAISS vector index
+│   ├── retrieval/             # Retrieval logic
+│   └── pipeline.py            # End-to-end orchestration
+│
+├── streamlit/                 # Visualization layer
+│   ├── app.py
+│   └── ui_components.py
+│
+├── evaluation/                # (Planned) RAG evaluation
+├── data/                      # Sample PDFs
+├── pyproject.toml
+├── requirements.txt
+└── README.md
 
-````
-
-The engine exposes a **single public surface**:
-
-```python
-engine.add_documents(...)
-engine.query(...)
 ````
 
 ---
 
-## 🚀 Quick Start
+## 🧠 Design Philosophy
 
-### 1. Install dependencies
+- **Chunking > Prompting**
+- **Structure before embeddings**
+- **Simple, inspectable components**
+- **Engine-level design**, not a chat app
 
-```bash
-pip install -r requirements.txt
-```
+This system is designed to be:
+- reusable
+- testable
+- extendable
+- consumable by agentic or reasoning systems
 
-Or install in editable mode (recommended):
+---
+
+## 🧪 Example Workflow
+
+1. Upload a research paper (PDF)
+2. Parse it into structured blocks
+3. Create semantic chunks based on topic coherence
+4. Index chunks using FAISS
+5. Retrieve relevant chunks for a query
+6. Inspect results via Streamlit UI
+
+---
+
+## 🛠️ Installation
 
 ```bash
 pip install -e .
+````
+
+Run the Streamlit app:
+
+```bash
+streamlit run streamlit/app.py
 ```
 
 ---
 
-### 2. Minimal usage example
+## 📌 Current Status
 
-```python
-from rag_engine.engine import RAGEngine
-from rag_engine.ingestion.loaders.text_loader import load_text
-from rag_engine.chunking.overlap import OverlapChunker
-from rag_engine.embeddings.local import LocalEmbeddingModel
-from rag_engine.vector_store.faiss_store import FaissVectorStore
-
-engine = RAGEngine(
-    chunker=OverlapChunker(chunk_size=400, overlap=100),
-    embedding_model=LocalEmbeddingModel(),
-    vector_store=FaissVectorStore(dim=384),
-    top_k=3
-)
-
-engine.add_documents([
-    load_text("Redis connection pool exhausted causing timeout"),
-    load_text("Database connection error during transaction")
-])
-
-response = engine.query("Why did the payment system timeout?")
-
-for r in response.results:
-    print(r.score, r.content)
-```
+* ✅ Structure-aware ingestion
+* ✅ Semantic chunking
+* ✅ Vector retrieval
+* ✅ Streamlit visualization
+* ⏳ RAGAS-based evaluation (planned)
 
 ---
 
-## 📄 PDF Support
+## 🔮 Future Work
 
-PDFs are treated as **first-class data sources**.
+* Quantitative evaluation using **RAGAS**
+* Algorithm & table-specific chunk handling
+* Intent-aware retrieval (definition vs comparison queries)
+* LLM-based answer generation layer
 
-Each page is ingested as an independent document with metadata:
 
-* `file_name`
-* `page_number`
-
-Example usage is available in:
-
-```
-examples/pdf_retrieval_demo.py
-```
-
----
-
-## 🔗 Intended Usage
-
-This engine is designed to be consumed by:
-
-* Agent runtimes
-* Decision graphs
-* RCA pipelines
-* Distributed agentic RAG systems
-
-For a full application using this engine, see:
-
-> **`distributed-agentic-rag`** (separate repository)
-
----
-
-## 🧪 Testing & Validation
-
-This repo focuses on:
-
-* correctness of retrieval
-* semantic relevance
-* deterministic behavior
-
-Answer quality evaluation (e.g. RAGAS) is intentionally **out of scope**.
-
----
-
-## 📌 Design Philosophy
-
-* Engines should be reusable
-* Retrieval should be deterministic
-* Agents should not own memory
-* Evaluation belongs to applications
-* LLMs are optional, not foundational
-
----
