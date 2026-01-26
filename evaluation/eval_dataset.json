@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is self-attention?",
+    "ground_truth": "Self-attention allows each position in a sequence to attend to all other positions to compute representations."
+  },
+  {
+    "question": "Why is self-attention more parallelizable than RNNs?",
+    "ground_truth": "Self-attention removes sequential dependencies, enabling parallel computation over all positions."
+  },
+  {
+    "question": "How does the Transformer encoder differ from the decoder?",
+    "ground_truth": "The encoder processes input sequences, while the decoder uses masked self-attention and encoder-decoder attention."
+  }
+]
