@@ -1,7 +1,14 @@
-from evaluation.ragas_eval import run_eval
-from evaluation.metrics import print_results
+# test_answer.py
+from rag_engine.pipeline import answer_question
 
-naive, semantic = run_eval("data/sample_paper.pdf")
+result = answer_question(
+    pdf_path="data/sample_paper.pdf",
+    question="Why is self-attention more parallelizable than RNNs?"
+)
 
-print_results("Naive Chunking", naive)
-print_results("Semantic Chunking", semantic)
+print("\nANSWER:\n")
+print(result["answer"])
+
+print("\nCONTEXT USED:\n")
+for c in result["contexts"]:
+    print(f"- {c.section_title}")

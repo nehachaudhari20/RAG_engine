@@ -10,6 +10,8 @@ from rag_engine.embeddings.embedder import Embedder
 from rag_engine.index.index_manager import IndexManager
 from rag_engine.retrieval.retriever import Retriever
 from ui_components import render_chunk
+from rag_engine.rag.answer_generator import AnswerGenerator
+
 
 
 st.set_page_config(page_title="Research Paper RAG", layout="wide")
@@ -49,6 +51,8 @@ if uploaded_file:
     index_manager.build(chunks)
 
     retriever = Retriever(index_manager)
+    generator = AnswerGenerator()
+
 
     st.success(f"Parsed {len(doc.blocks)} paragraphs → {len(chunks)} semantic chunks")
 
@@ -69,8 +73,21 @@ if uploaded_file:
     if query:
         results = retriever.retrieve(query, top_k=5)
 
+    # -----------------------------
+    # Generated Answer
+    # -----------------------------
+        with st.spinner("Generating answer..."):
+            answer = generator.generate(query, results)
+
+        st.subheader("Answer")
+        st.markdown(answer)
+
+    # -----------------------------
+    # Retrieved Context
+    # -----------------------------
         st.subheader("Retrieved Context")
         for r in results:
             render_chunk(r)
+
 
     os.remove(pdf_path)
